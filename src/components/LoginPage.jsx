@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Lock } from 'lucide-react';
+import DigitalBackground from './DigitalBackground';
 
 const LoginPage = () => {
     const [code, setCode] = useState('');
@@ -17,8 +18,9 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center px-4">
-            <div className="max-w-md w-full">
+        <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
+            <DigitalBackground />
+            <div className="max-w-md w-full relative z-10">
                 <div className="text-center mb-8">
                     <h1 className="text-5xl font-rajdhani font-bold text-neon-red tracking-wider mb-2">
                         ZDURL
@@ -28,7 +30,7 @@ const LoginPage = () => {
                     </p>
                 </div>
 
-                <div className="bg-gray-900 rounded-lg p-8 border border-gray-800 shadow-2xl">
+                <div className="bg-black/80 backdrop-blur-sm rounded-lg p-8 border border-gray-800 shadow-2xl">
                     <div className="flex justify-center mb-6">
                         <div className="w-16 h-16 bg-neon-red/10 rounded-full flex items-center justify-center">
                             <Lock className="w-8 h-8 text-neon-red" />
