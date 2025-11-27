@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useLeague } from '../context/LeagueContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { Save } from 'lucide-react';
 
 const RaceManager = () => {
     const { racers, updateRaceResult } = useLeague();
     const { isAdmin } = useAuth();
+    const { showToast } = useToast();
     const [selectedRaceId, setSelectedRaceId] = useState('race_1');
     const [raceResults, setRaceResults] = useState({}); // { position: racerId }
 
@@ -50,7 +52,7 @@ const RaceManager = () => {
         });
 
         updateRaceResult(selectedRaceId, fullResults);
-        alert('Race results updated!');
+        showToast('Race results updated!', 'success');
     };
 
     return (

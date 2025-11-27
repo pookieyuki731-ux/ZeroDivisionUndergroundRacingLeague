@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LeagueProvider } from './context/LeagueContext';
+import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 import Leaderboard from './components/Leaderboard';
 import RaceManager from './components/RaceManager';
@@ -44,9 +45,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <LeagueProvider>
-        <AppContent />
-      </LeagueProvider>
+      <ToastProvider>
+        <LeagueProvider>
+          <AppContent />
+        </LeagueProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }
