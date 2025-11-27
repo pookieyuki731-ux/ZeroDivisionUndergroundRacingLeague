@@ -17,6 +17,16 @@ const DigitalBackground = () => {
         }
 
         let animationFrameId;
+        let mouseX = -1000;
+        let mouseY = -1000;
+
+        const handleMouseMove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        };
+
+        canvas.addEventListener('mousemove', handleMouseMove);
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
@@ -61,10 +71,27 @@ const DigitalBackground = () => {
                 const x = i * fontSize + xOffset;
                 const y = drops[i] * fontSize;
 
+                // Calculate distance from mouse
+                const distanceFromMouse = Math.sqrt(
+                    Math.pow(x - mouseX, 2) + Math.pow(y - mouseY, 2)
+                );
+
+                // Characters react to mouse - push away or brighten
+                let cursorEffect = 0;
+                if (distanceFromMouse < 100) {
+                    cursorEffect = (100 - distanceFromMouse) / 100;
+                }
+
                 // Make characters brighter and more visible
-                const opacity = Math.random() * 0.4 + 0.6; // 0.6 to 1.0
+                const baseOpacity = Math.random() * 0.4 + 0.6;
+                const opacity = Math.min(1, baseOpacity + cursorEffect * 0.4);
                 ctx.fillStyle = `rgba(255, 23, 68, ${opacity})`;
-                ctx.fillText(text, x, y);
+
+                // Add slight push effect from cursor
+                const pushX = cursorEffect * 10 * (x - mouseX) / distanceFromMouse || 0;
+                const pushY = cursorEffect * 10 * (y - mouseY) / distanceFromMouse || 0;
+
+                ctx.fillText(text, x + pushX, y + pushY);
 
                 // Reset drop to top when it goes off screen
                 if (y > canvas.height && Math.random() > 0.98) {
@@ -74,23 +101,6 @@ const DigitalBackground = () => {
                 drops[i] += 0.5; // Slower falling speed
             }
 
-            // Draw the "ZERO DIVISION" text as a mask (on top of the falling characters)
-            // This creates a cutout effect where the text blocks the characters
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.font = 'bold 200px Arial, sans-serif';
-            ctx.lineWidth = 15;
-
-            // Draw "ZERO" with stroke for better visibility
-            ctx.strokeStyle = 'black';
-            ctx.fillStyle = 'black';
-            ctx.strokeText('ZERO', canvas.width / 2, canvas.height / 2 - 120);
-            ctx.fillText('ZERO', canvas.width / 2, canvas.height / 2 - 120);
-
-            // Draw "DIVISION"
-            ctx.strokeText('DIVISION', canvas.width / 2, canvas.height / 2 + 80);
-            ctx.fillText('DIVISION', canvas.width / 2, canvas.height / 2 + 80);
-
             animationFrameId = requestAnimationFrame(draw);
         };
 
@@ -99,6 +109,7 @@ const DigitalBackground = () => {
 
         return () => {
             console.log('Cleaning up animation');
+            canvas.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('resize', resizeCanvas);
             cancelAnimationFrame(animationFrameId);
         };
@@ -114,7 +125,7 @@ const DigitalBackground = () => {
                 width: '100%',
                 height: '100%',
                 zIndex: 0,
-                pointerEvents: 'none'
+                pointerEvents: 'auto'
             }}
         />
     );

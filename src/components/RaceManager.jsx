@@ -9,8 +9,8 @@ const RaceManager = () => {
     const [selectedRaceId, setSelectedRaceId] = useState('race_1');
     const [raceResults, setRaceResults] = useState({}); // { position: racerId }
 
-    // Generate race options (e.g., 10 races)
-    const races = Array.from({ length: 10 }, (_, i) => ({
+    // Generate race options (5 races)
+    const races = Array.from({ length: 5 }, (_, i) => ({
         id: `race_${i + 1}`,
         name: `Race ${i + 1}`
     }));
@@ -91,9 +91,9 @@ const RaceManager = () => {
                     {Array.from({ length: 10 }, (_, i) => i + 1).map(position => (
                         <div key={position} className="flex items-center space-x-4 p-4 bg-black/40 rounded border border-gray-800">
                             <div className={`w-10 h-10 flex items-center justify-center rounded font-bold text-lg ${position === 1 ? 'bg-yellow-500 text-black' :
-                                    position === 2 ? 'bg-gray-400 text-black' :
-                                        position === 3 ? 'bg-orange-700 text-white' :
-                                            'bg-gray-800 text-gray-400'
+                                position === 2 ? 'bg-gray-400 text-black' :
+                                    position === 3 ? 'bg-orange-700 text-white' :
+                                        'bg-gray-800 text-gray-400'
                                 }`}>
                                 {position}
                             </div>
