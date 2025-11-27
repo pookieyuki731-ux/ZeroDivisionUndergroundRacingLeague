@@ -6,8 +6,8 @@ export const useAuth = () => useContext(AuthContext);
 
 // Access codes
 const ACCESS_CODES = {
-    VIEWER: 'viewer123',  // Code 1: View-only access
-    ADMIN: 'admin456'     // Code 2: Full admin access
+    VIEWER: 'ZoomDivision',  // Code 1: View-only access
+    ADMIN: 'DeroZivision@4!' // Code 2: Full admin access
 };
 
 export const AuthProvider = ({ children }) => {
