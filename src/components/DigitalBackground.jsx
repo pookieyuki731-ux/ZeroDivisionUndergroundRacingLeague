@@ -71,8 +71,25 @@ const DigitalBackground = () => {
                     drops[i] = 0;
                 }
 
-                drops[i]++;
+                drops[i] += 0.5; // Slower falling speed
             }
+
+            // Draw the "ZERO DIVISION" text as a mask (on top of the falling characters)
+            // This creates a cutout effect where the text blocks the characters
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 200px Arial, sans-serif';
+            ctx.lineWidth = 15;
+
+            // Draw "ZERO" with stroke for better visibility
+            ctx.strokeStyle = 'black';
+            ctx.fillStyle = 'black';
+            ctx.strokeText('ZERO', canvas.width / 2, canvas.height / 2 - 120);
+            ctx.fillText('ZERO', canvas.width / 2, canvas.height / 2 - 120);
+
+            // Draw "DIVISION"
+            ctx.strokeText('DIVISION', canvas.width / 2, canvas.height / 2 + 80);
+            ctx.fillText('DIVISION', canvas.width / 2, canvas.height / 2 + 80);
 
             animationFrameId = requestAnimationFrame(draw);
         };

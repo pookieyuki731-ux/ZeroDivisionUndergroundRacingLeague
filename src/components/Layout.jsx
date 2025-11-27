@@ -1,7 +1,6 @@
 import React from 'react';
 import { Trophy, Users, Settings as SettingsIcon, Flag, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import DigitalBackground from './DigitalBackground';
 
 const Layout = ({ children, activeTab, setActiveTab }) => {
     const { isAdmin, logout } = useAuth();
@@ -19,8 +18,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
     );
 
     return (
-        <div className="min-h-screen bg-black text-white font-inter selection:bg-neon-red selection:text-white relative overflow-hidden">
-            <DigitalBackground />
+        <div className="min-h-screen bg-black text-white font-inter selection:bg-neon-red selection:text-white">
             <nav className="border-b border-gray-800 bg-black/50 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
