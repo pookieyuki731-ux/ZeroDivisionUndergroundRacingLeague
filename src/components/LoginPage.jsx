@@ -18,9 +18,9 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="min-h-screen bg-black flex items-center justify-center px-4" style={{ position: 'relative' }}>
             <DigitalBackground />
-            <div className="max-w-md w-full relative z-10">
+            <div className="max-w-md w-full" style={{ position: 'relative', zIndex: 10 }}>
                 <div className="text-center mb-8">
                     <h1 className="text-5xl font-rajdhani font-bold text-neon-red tracking-wider mb-2">
                         ZDURL
