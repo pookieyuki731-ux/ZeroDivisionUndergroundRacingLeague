@@ -24,9 +24,6 @@ const LoginPage = () => {
             <div className="max-w-md w-full flex flex-col items-center" style={{ position: 'relative', zIndex: 10 }}>
                 {/* Title Section - Centered, Big, Bold, White */}
                 <div className="text-center mb-10">
-                    <h1 className="text-8xl font-black text-white tracking-tighter leading-none mb-4" style={{ textShadow: '0 0 20px rgba(0,0,0,0.8)' }}>
-                        ZDURL
-                    </h1>
                     <p className="text-xl font-bold text-white uppercase tracking-[0.2em] leading-relaxed" style={{ textShadow: '0 0 10px rgba(0,0,0,0.8)' }}>
                         Zero Division<br />
                         Underground Racing League
