@@ -64,7 +64,7 @@ const Leaderboard = () => {
                     </h2>
                     <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 shadow-2xl">
                         <div className="text-center mb-8">
-                            <p className="text-gray-400 uppercase text-sm tracking-widest">Total Purse</p>
+                            <p className="text-gray-400 uppercase text-sm tracking-widest">Total Prize Pool</p>
                             <p className="text-4xl font-bold text-neon-red font-rajdhani">
                                 ${settings.totalPrizePool.toLocaleString()}
                             </p>
@@ -77,9 +77,9 @@ const Leaderboard = () => {
                                     <div key={racer.id} className="flex justify-between items-center p-3 bg-black/40 rounded border border-gray-800">
                                         <div className="flex items-center">
                                             <span className={`w-6 h-6 flex items-center justify-center rounded text-xs font-bold mr-3 ${index === 0 ? 'bg-yellow-500 text-black' :
-                                                    index === 1 ? 'bg-gray-400 text-black' :
-                                                        index === 2 ? 'bg-orange-700 text-white' :
-                                                            'bg-gray-800 text-gray-400'
+                                                index === 1 ? 'bg-gray-400 text-black' :
+                                                    index === 2 ? 'bg-orange-700 text-white' :
+                                                        'bg-gray-800 text-gray-400'
                                                 }`}>
                                                 {index + 1}
                                             </span>
