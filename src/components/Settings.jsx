@@ -6,7 +6,7 @@ const Settings = () => {
 
     return (
         <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-rajdhani font-bold text-white border-l-4 border-neon-red pl-4 mb-8">
+            <h2 className="text-3xl font-rajdhani font-bold mb-8 text-white border-l-4 border-neon-blue pl-4">
                 LEAGUE SETTINGS
             </h2>
 
@@ -19,7 +19,7 @@ const Settings = () => {
                         type="number"
                         value={settings.totalPrizePool}
                         onChange={(e) => setSettings(prev => ({ ...prev, totalPrizePool: Number(e.target.value) }))}
-                        className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-red font-rajdhani text-xl"
+                        className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-blue font-rajdhani text-xl"
                     />
                     <p className="text-xs text-gray-500 mt-2">
                         This amount will be distributed according to the league's percentage rules.

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useLeague } from '../context/LeagueContext';
-import { RefreshCw, Trash2, Edit2, Save, X } from 'lucide-react';
+import { RefreshCw, Trash2, Edit2, Save, X, Plus } from 'lucide-react';
 
 const RosterManager = () => {
     const { racers, loading, syncRoster, updateRacer, deleteRacer } = useLeague();
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({ name: '' });
+    const [showAddForm, setShowAddForm] = useState(false);
 
     const handleSync = () => {
         syncRoster();
@@ -22,18 +23,22 @@ const RosterManager = () => {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-end border-b border-gray-800 pb-6">
-                <div>
-                    <h2 className="text-3xl font-rajdhani font-bold text-white border-l-4 border-neon-red pl-4 mb-2">
-                        ROSTER MANAGEMENT
-                    </h2>
-                    <p className="text-gray-400">Sync with Google Form or manage racers manually.</p>
-                </div>
+        <div className="max-w-4xl mx-auto">
+            <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-rajdhani font-bold text-white border-l-4 border-neon-blue pl-4">
+                    ROSTER MANAGEMENT
+                </h2>
+                <button
+                    onClick={() => setShowAddForm(!showAddForm)}
+                    className="flex items-center px-4 py-2 bg-cyan-600 text-white rounded hover:bg-blue-700 transition-colors"
+                >
+                    {showAddForm ? <X className="w-5 h-5 mr-2" /> : <Plus className="w-5 h-5 mr-2" />}
+                    {showAddForm ? 'Cancel' : 'Add Racer'}
+                </button>
             </div>
 
             {/* Sync Section */}
-            <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+            <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-8"> {/* Added mb-8 for spacing */}
                 <div className="flex justify-between items-center">
                     <div>
                         <h3 className="text-lg font-bold text-white mb-2">Sync from Google Form</h3>
@@ -44,7 +49,7 @@ const RosterManager = () => {
                     <button
                         onClick={handleSync}
                         disabled={loading}
-                        className="flex items-center bg-neon-red hover:bg-red-700 disabled:bg-gray-700 text-white px-6 py-2 rounded font-bold transition-colors"
+                        className="flex items-center bg-cyan-600 hover:bg-blue-700 disabled:bg-gray-700 text-white px-6 py-2 rounded font-bold transition-colors"
                     >
                         <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                         {loading ? 'Syncing...' : 'Sync Roster'}

@@ -1,32 +1,34 @@
 ---
 description: How to update and deploy the website
 ---
+# Update and Deploy Workflow
 
-# How to Update Your Website
+This workflow describes how to make changes to the website locally, verify them, and deploy the updates to GitHub Pages.
 
-Follow these steps whenever you want to push changes to the live website.
+## Prerequisites
+- Node.js installed (already set up)
+- Dependencies installed (`npm install`)
 
-1.  **Make your changes**
-    Edit your code, add features, fix bugs, etc.
+## Steps
 
-2.  **Test locally**
-    Run `npm run dev` and check that everything works as expected on `http://localhost:5173`.
+1. **Start Local Server**
+   Run the development server to see your changes in real-time.
+   ```powershell
+   npm run dev
+   ```
+   Open your browser to the URL shown (usually `http://localhost:5173/ZeroDivisionUndergroundRacingLeague/`).
 
-3.  **Save your changes to Git**
-    Open a new terminal and run:
-    ```powershell
-    git add .
-    git commit -m "Describe your changes here"
-    git push
-    ```
-    *This saves your code to your GitHub repository.*
+2. **Make Changes**
+   Edit the files in the `src` directory. The browser will automatically reload with your changes.
 
-4.  **Deploy to the live website**
-    Run:
-    ```powershell
-    npm run deploy
-    ```
-    *This builds your website and updates the live version on GitHub Pages.*
+3. **Deploy to GitHub Pages**
+   Once you are happy with your changes, run the following command to build and deploy the site.
+   ```powershell
+   npm run deploy
+   ```
+   This command will:
+   - Build the project (`npm run build`)
+   - Push the `dist` folder to the `gh-pages` branch on GitHub.
 
-5.  **Verify**
-    Visit your website link to see the changes (it may take 1-2 minutes to update).
+4. **Verify Deployment**
+   Visit your live GitHub Pages site to see the updates (it may take a few minutes to update).

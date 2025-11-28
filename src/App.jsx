@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LeagueProvider } from './context/LeagueContext';
+import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 import Leaderboard from './components/Leaderboard';
 import RaceManager from './components/RaceManager';
 import RosterManager from './components/RosterManager';
 import Settings from './components/Settings';
+import Info from './components/Info';
 import LoginPage from './components/LoginPage';
 
 function AppContent() {
@@ -22,6 +24,8 @@ function AppContent() {
         return <Leaderboard />;
       case 'races':
         return <RaceManager />;
+      case 'info':
+        return <Info />;
       case 'roster':
         return <RosterManager />;
       case 'settings':
@@ -41,9 +45,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <LeagueProvider>
-        <AppContent />
-      </LeagueProvider>
+      <ToastProvider>
+        <LeagueProvider>
+          <AppContent />
+        </LeagueProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }
