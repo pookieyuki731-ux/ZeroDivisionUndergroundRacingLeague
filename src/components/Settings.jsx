@@ -1,5 +1,55 @@
 import React from 'react';
 import { useLeague } from '../context/LeagueContext';
+import { supabase } from '../utils/supabase';
+
+const Settings = () => {
+    const { settings, setSettings, isAdmin, verifyAdmin, logoutAdmin } = useLeague();
+    const [accessCode, setAccessCode] = React.useState('');
+    const [localPrizePool, setLocalPrizePool] = React.useState('');
+
+    // Initialize local state when settings are loaded
+    React.useEffect(() => {
+        if (settings?.totalPrizePool) {
+            setLocalPrizePool(settings.totalPrizePool);
+        }
+    }, [settings]);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        if (verifyAdmin(accessCode)) {
+            setAccessCode('');
+        }
+    };
+
+    const handleUpdatePrizePool = async () => {
+        const newPrizePool = Number(localPrizePool);
+
+        // Optimistic update
+        setSettings(prevSettings => ({
+            ...prevSettings,
+            totalPrizePool: newPrizePool
+        }));
+
+        try {
+            const { updateSettings } = await import('../utils/supabase');
+            await updateSettings({ totalPrizePool: newPrizePool });
+        } catch (error) {
+            console.error('Failed to update settings:', error);
+        }
+    };
+
+    return (
+        <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-rajdhani font-bold mb-8 text-white border-l-4 border-neon-blue pl-4">
+                LEAGUE SETTINGS
+            </h2>
+
+            <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 shadow-2xl space-y-6">
+                {/* Admin Access Section */}
+                <div className="border-b border-gray-800 pb-6">
+                    <h3 className="text-lg font-bold text-white mb-4">Admin Access</h3>
+                    {!isAdmin ? (
+                        <form onSubmit={handleLogin} className="flex gap-4">
                             <input
                                 type="password"
                                 value={accessCode}
@@ -13,22 +63,22 @@ import { useLeague } from '../context/LeagueContext';
                             >
                                 LOGIN
                             </button>
-                        </form >
+                        </form>
                     ) : (
-    <div className="flex items-center justify-between bg-green-900/20 border border-green-500/30 rounded p-4">
-        <div className="flex items-center gap-2 text-green-400">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span className="font-rajdhani font-bold">ADMIN ACCESS GRANTED</span>
-        </div>
-        <button
-            onClick={logoutAdmin}
-            className="text-gray-400 hover:text-white text-sm underline"
-        >
-            Logout
-        </button>
-    </div>
-)}
-                </div >
+                        <div className="flex items-center justify-between bg-green-900/20 border border-green-500/30 rounded p-4">
+                            <div className="flex items-center gap-2 text-green-400">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span className="font-rajdhani font-bold">ADMIN ACCESS GRANTED</span>
+                            </div>
+                            <button
+                                onClick={logoutAdmin}
+                                className="text-gray-400 hover:text-white text-sm underline"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -77,8 +127,8 @@ import { useLeague } from '../context/LeagueContext';
                         Reset All Data
                     </button>
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 
