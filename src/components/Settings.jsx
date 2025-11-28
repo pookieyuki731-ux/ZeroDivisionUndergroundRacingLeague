@@ -21,7 +21,14 @@ const Settings = () => {
     };
 
     const handleUpdatePrizePool = () => {
-        setSettings({ ...settings, totalPrizePool: Number(localPrizePool) });
+        console.log('handleUpdatePrizePool called, localPrizePool:', localPrizePool);
+        const newPrizePool = Number(localPrizePool);
+        console.log('Parsed prize pool:', newPrizePool);
+        setSettings(prevSettings => {
+            const updated = { ...prevSettings, totalPrizePool: newPrizePool };
+            console.log('New settings object:', updated);
+            return updated;
+        });
     };
 
     return (
