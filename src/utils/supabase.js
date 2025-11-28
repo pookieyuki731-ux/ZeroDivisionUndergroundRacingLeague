@@ -18,10 +18,13 @@ export const fetchRacers = async () => {
         return [];
     }
 
-    return data.map(racer => ({
-        ...racer,
-        raceResults: racer.race_results || {}
-    }));
+    // Client-side filter because server-side neq might be flaky
+    return data
+        .filter(r => r.name !== '__LEAGUE_SETTINGS__')
+        .map(racer => ({
+            ...racer,
+            raceResults: racer.race_results || {}
+        }));
 };
 
 // Add a new racer
@@ -130,15 +133,17 @@ export const fetchSettings = async () => {
     const { data, error } = await supabase
         .from('racers')
         .select('*')
-        .eq('name', '__LEAGUE_SETTINGS__')
-        .single();
+        .eq('name', '__LEAGUE_SETTINGS__'); // Returns multiple rows due to Supabase quirk
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "The result contains 0 rows"
+    if (error) {
         console.error('Error fetching settings:', error);
         return null;
     }
 
-    if (!data) {
+    // Client-side find
+    const settingsRow = data.find(r => r.name === '__LEAGUE_SETTINGS__');
+
+    if (!settingsRow) {
         // Create default settings if they don't exist
         const defaultSettings = {
             totalPrizePool: 150000
@@ -162,17 +167,18 @@ export const fetchSettings = async () => {
         return defaultSettings;
     }
 
-    return data.race_results; // We store settings in the race_results JSON column
+    return settingsRow.race_results; // We store settings in the race_results JSON column
 };
 
 // Update global settings
 export const updateSettings = async (settings) => {
-    // First get the ID of the settings row
-    const { data: existing } = await supabase
+    // First get the ID of the settings row using client-side find
+    const { data } = await supabase
         .from('racers')
-        .select('id')
-        .eq('name', '__LEAGUE_SETTINGS__')
-        .single();
+        .select('*')
+        .eq('name', '__LEAGUE_SETTINGS__');
+
+    const existing = data?.find(r => r.name === '__LEAGUE_SETTINGS__');
 
     if (!existing) {
         // Should have been created by fetchSettings, but just in case

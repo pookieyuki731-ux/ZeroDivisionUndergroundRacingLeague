@@ -28,9 +28,10 @@ export const LeagueProvider = ({ children }) => {
         // Real-time subscription for settings
         const subscription = supabase
             .channel('public:racers')
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'racers', filter: 'name=eq.__LEAGUE_SETTINGS__' }, (payload) => {
-                console.log('Real-time settings update received:', payload);
-                if (payload.new && payload.new.race_results) {
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'racers' }, (payload) => {
+                // Client-side filter for settings row
+                if (payload.new && payload.new.name === '__LEAGUE_SETTINGS__' && payload.new.race_results) {
+                    console.log('Real-time settings update received:', payload);
                     setSettings(payload.new.race_results);
                     showToast('Settings updated remotely', 'info');
                 }
