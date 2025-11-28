@@ -4,12 +4,24 @@ import { useLeague } from '../context/LeagueContext';
 const Settings = () => {
     const { settings, setSettings, isAdmin, verifyAdmin, logoutAdmin } = useLeague();
     const [accessCode, setAccessCode] = React.useState('');
+    const [localPrizePool, setLocalPrizePool] = React.useState('');
+
+    // Initialize local state when settings are loaded
+    React.useEffect(() => {
+        if (settings?.totalPrizePool) {
+            setLocalPrizePool(settings.totalPrizePool);
+        }
+    }, [settings]);
 
     const handleLogin = (e) => {
         e.preventDefault();
         if (verifyAdmin(accessCode)) {
             setAccessCode('');
         }
+    };
+
+    const handleUpdatePrizePool = () => {
+        setSettings({ ...settings, totalPrizePool: Number(localPrizePool) });
     };
 
     return (
@@ -59,20 +71,28 @@ const Settings = () => {
                         Total Prize Pool ($)
                     </label>
                     {isAdmin ? (
-                        <input
-                            type="number"
-                            value={settings.totalPrizePool}
-                            onChange={(e) => setSettings({ ...settings, totalPrizePool: Number(e.target.value) })}
-                            className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-blue font-rajdhani text-xl"
-                        />
+                        <div className="space-y-3">
+                            <input
+                                type="number"
+                                value={localPrizePool}
+                                onChange={(e) => setLocalPrizePool(e.target.value)}
+                                className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-blue font-rajdhani text-xl"
+                            />
+                            <button
+                                onClick={handleUpdatePrizePool}
+                                className="w-full bg-neon-blue text-black font-bold py-2 rounded hover:bg-blue-400 transition-colors font-rajdhani uppercase tracking-wider"
+                            >
+                                Update Prize Pool
+                            </button>
+                        </div>
                     ) : (
                         <div className="w-full bg-black/30 border border-gray-800 rounded px-4 py-2 text-gray-300 font-rajdhani text-xl cursor-not-allowed">
-                            ${settings.totalPrizePool.toLocaleString()}
+                            ${settings.totalPrizePool?.toLocaleString()}
                         </div>
                     )}
                     <p className="text-xs text-gray-500 mt-2">
                         {isAdmin
-                            ? "This amount will be distributed according to the league's percentage rules."
+                            ? "Click update to save changes for all users."
                             : "Only admins can modify the prize pool."}
                     </p>
                 </div>
