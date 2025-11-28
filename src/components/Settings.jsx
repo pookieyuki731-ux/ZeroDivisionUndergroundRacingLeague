@@ -1,101 +1,5 @@
 import React from 'react';
 import { useLeague } from '../context/LeagueContext';
-import { supabase } from '../utils/supabase';
-
-const Settings = () => {
-    const { settings, setSettings, isAdmin, verifyAdmin, logoutAdmin } = useLeague();
-    const [accessCode, setAccessCode] = React.useState('');
-    const [localPrizePool, setLocalPrizePool] = React.useState('');
-    const [debugInfo, setDebugInfo] = React.useState(null);
-
-    // Initialize local state when settings are loaded
-    React.useEffect(() => {
-        if (settings?.totalPrizePool) {
-            setLocalPrizePool(settings.totalPrizePool);
-        }
-    }, [settings]);
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-        if (verifyAdmin(accessCode)) {
-            setAccessCode('');
-        }
-    };
-
-    const handleUpdatePrizePool = async () => {
-        const newPrizePool = Number(localPrizePool);
-
-        // Optimistic update
-        setSettings(prevSettings => ({
-            ...prevSettings,
-            totalPrizePool: newPrizePool
-        }));
-
-        try {
-            const { updateSettings } = await import('../utils/supabase');
-            await updateSettings({ totalPrizePool: newPrizePool });
-            // showToast('Settings saved successfully', 'success'); // Toast is handled in LeagueContext polling or we can add it here
-        } catch (error) {
-            console.error('Failed to update settings:', error);
-            // Revert on error?
-        }
-    };
-
-    const runDebug = async () => {
-        try {
-            setDebugInfo('Fetching via fetchSettings()...');
-            const result = await import('../utils/supabase').then(m => m.fetchSettings());
-            setDebugInfo('Fetch Result: ' + JSON.stringify(result, null, 2));
-        } catch (e) {
-            setDebugInfo('Fetch Error: ' + e.message);
-        }
-    };
-
-    const runUpdateDebug = async () => {
-        try {
-            setDebugInfo('Attempting update to 123456...');
-            const { updateSettings } = await import('../utils/supabase');
-            await updateSettings({ totalPrizePool: 123456 });
-            setDebugInfo('Update Success! Check if value changed to 123456.');
-        } catch (e) {
-            setDebugInfo('Update Error: ' + JSON.stringify(e, null, 2) + '\n' + e.message);
-        }
-    };
-
-    return (
-        <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-rajdhani font-bold mb-8 text-white border-l-4 border-neon-blue pl-4">
-                LEAGUE SETTINGS
-            </h2>
-
-            {/* Debug Section */}
-            <div className="mb-8 p-4 bg-gray-900 rounded border border-red-500">
-                <h3 className="text-red-500 font-bold mb-2">Debug Info</h3>
-                <div className="flex gap-2 mb-2">
-                    <button
-                        onClick={runDebug}
-                        className="bg-red-600 text-white px-4 py-2 rounded"
-                    >
-                        Test Fetch
-                    </button>
-                    <button
-                        onClick={runUpdateDebug}
-                        className="bg-orange-600 text-white px-4 py-2 rounded"
-                    >
-                        Test Update (to 123456)
-                    </button>
-                </div>
-                <pre className="text-xs text-white overflow-auto max-h-40">
-                    {debugInfo || 'Click buttons to test Supabase connection'}
-                </pre>
-            </div>
-
-            <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 shadow-2xl space-y-6">
-                {/* Admin Access Section */}
-                <div className="border-b border-gray-800 pb-6">
-                    <h3 className="text-lg font-bold text-white mb-4">Admin Access</h3>
-                    {!isAdmin ? (
-                        <form onSubmit={handleLogin} className="flex gap-4">
                             <input
                                 type="password"
                                 value={accessCode}
@@ -109,22 +13,22 @@ const Settings = () => {
                             >
                                 LOGIN
                             </button>
-                        </form>
+                        </form >
                     ) : (
-                        <div className="flex items-center justify-between bg-green-900/20 border border-green-500/30 rounded p-4">
-                            <div className="flex items-center gap-2 text-green-400">
-                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                <span className="font-rajdhani font-bold">ADMIN ACCESS GRANTED</span>
-                            </div>
-                            <button
-                                onClick={logoutAdmin}
-                                className="text-gray-400 hover:text-white text-sm underline"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    )}
-                </div>
+    <div className="flex items-center justify-between bg-green-900/20 border border-green-500/30 rounded p-4">
+        <div className="flex items-center gap-2 text-green-400">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span className="font-rajdhani font-bold">ADMIN ACCESS GRANTED</span>
+        </div>
+        <button
+            onClick={logoutAdmin}
+            className="text-gray-400 hover:text-white text-sm underline"
+        >
+            Logout
+        </button>
+    </div>
+)}
+                </div >
 
                 <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -173,8 +77,8 @@ const Settings = () => {
                         Reset All Data
                     </button>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
