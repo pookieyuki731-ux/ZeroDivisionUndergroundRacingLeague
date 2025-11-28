@@ -45,9 +45,20 @@ const Settings = () => {
         try {
             setDebugInfo('Fetching via fetchSettings()...');
             const result = await import('../utils/supabase').then(m => m.fetchSettings());
-            setDebugInfo('Result: ' + JSON.stringify(result, null, 2));
+            setDebugInfo('Fetch Result: ' + JSON.stringify(result, null, 2));
         } catch (e) {
-            setDebugInfo('Error: ' + e.message);
+            setDebugInfo('Fetch Error: ' + e.message);
+        }
+    };
+
+    const runUpdateDebug = async () => {
+        try {
+            setDebugInfo('Attempting update to 123456...');
+            const { updateSettings } = await import('../utils/supabase');
+            await updateSettings({ totalPrizePool: 123456 });
+            setDebugInfo('Update Success! Check if value changed to 123456.');
+        } catch (e) {
+            setDebugInfo('Update Error: ' + JSON.stringify(e, null, 2) + '\n' + e.message);
         }
     };
 
@@ -60,14 +71,22 @@ const Settings = () => {
             {/* Debug Section */}
             <div className="mb-8 p-4 bg-gray-900 rounded border border-red-500">
                 <h3 className="text-red-500 font-bold mb-2">Debug Info</h3>
-                <button
-                    onClick={runDebug}
-                    className="bg-red-600 text-white px-4 py-2 rounded mb-2"
-                >
-                    Test Fetch
-                </button>
+                <div className="flex gap-2 mb-2">
+                    <button
+                        onClick={runDebug}
+                        className="bg-red-600 text-white px-4 py-2 rounded"
+                    >
+                        Test Fetch
+                    </button>
+                    <button
+                        onClick={runUpdateDebug}
+                        className="bg-orange-600 text-white px-4 py-2 rounded"
+                    >
+                        Test Update (to 123456)
+                    </button>
+                </div>
                 <pre className="text-xs text-white overflow-auto max-h-40">
-                    {debugInfo || 'Click Test Fetch to see raw Supabase data'}
+                    {debugInfo || 'Click buttons to test Supabase connection'}
                 </pre>
             </div>
 
