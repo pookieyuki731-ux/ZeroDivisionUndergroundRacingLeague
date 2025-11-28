@@ -30,9 +30,15 @@ export const LeagueProvider = ({ children }) => {
         const pollInterval = setInterval(async () => {
             try {
                 const newSettings = await fetchSettings();
-                if (newSettings && newSettings.totalPrizePool !== settings.totalPrizePool) {
-                    setSettings(newSettings);
-                    showToast('Settings updated', 'info');
+                if (newSettings) {
+                    setSettings(prevSettings => {
+                        // Only update if the value actually changed
+                        if (newSettings.totalPrizePool !== prevSettings.totalPrizePool) {
+                            showToast('Settings updated', 'info');
+                            return newSettings;
+                        }
+                        return prevSettings;
+                    });
                 }
             } catch (error) {
                 console.error('Error polling settings:', error);
@@ -42,7 +48,7 @@ export const LeagueProvider = ({ children }) => {
         return () => {
             clearInterval(pollInterval);
         };
-    }, [settings.totalPrizePool]);
+    }, []); // Empty dependency array - only run once on mount
 
     const loadData = async () => {
         setLoading(true);
