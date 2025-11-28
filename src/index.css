@@ -24,8 +24,10 @@ body {
 }
 
 @theme {
-  --color-neon-red: #FF1744;
-  --color-deep-red: #B71C1C;
+  --color-neon-blue: #5ce1e6;
+  --color-deep-blue: #00838f;
+  --color-neon-red: #ff1744;
+  --color-deep-red: #d50000;
   --font-rajdhani: 'Rajdhani', sans-serif;
 }
 
@@ -34,6 +36,7 @@ body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;

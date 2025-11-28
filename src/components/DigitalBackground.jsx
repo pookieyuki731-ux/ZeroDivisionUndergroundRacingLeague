@@ -1,7 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 
-const DigitalBackground = () => {
+const DigitalBackground = ({ color = '#ff1744' }) => {
     const canvasRef = useRef(null);
+    const colorRef = useRef(color); // Store color in ref to avoid restarting animation
+
+    // Update color ref when color prop changes
+    useEffect(() => {
+        colorRef.current = color;
+    }, [color]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -33,11 +39,12 @@ const DigitalBackground = () => {
         // Configuration
         const fontSize = 16;
         const charSet = ['.', '+', '◇', '◈']; // Characters from low to high intensity
-        
+
         let time = 0;
 
         const draw = () => {
             // Clear with slight fade for trail effect (optional, but clean clear is better for this style)
+            ctx.globalAlpha = 1;
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -59,16 +66,16 @@ const DigitalBackground = () => {
                     const dx = x - mouseX;
                     const dy = y - mouseY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    
+
                     // Wave calculation
                     // Combine multiple sine waves for a more organic "merging" feel
                     const wave1 = Math.sin(i * 0.1 + time);
                     const wave2 = Math.cos(j * 0.1 + time * 0.8);
                     const wave3 = Math.sin((i + j) * 0.05 + time * 0.5);
-                    
+
                     // Base intensity (-1 to 1) -> normalized (0 to 1)
                     let intensity = (wave1 + wave2 + wave3) / 3;
-                    
+
                     // Mouse interaction: create a ripple/distortion effect
                     if (dist < 300) {
                         const interaction = (1 - dist / 300);
@@ -83,10 +90,11 @@ const DigitalBackground = () => {
                     const char = charSet[charIndex];
 
                     // Color calculation
-                    // Neon Red: rgb(255, 23, 68)
                     // Opacity based on intensity
                     const opacity = 0.1 + (intensity * 0.9);
-                    ctx.fillStyle = `rgba(255, 23, 68, ${opacity})`;
+
+                    ctx.globalAlpha = opacity;
+                    ctx.fillStyle = colorRef.current; // Use ref instead of prop
 
                     ctx.fillText(char, x, y);
                 }
@@ -102,7 +110,7 @@ const DigitalBackground = () => {
             window.removeEventListener('resize', resizeCanvas);
             cancelAnimationFrame(animationFrameId);
         };
-    }, []);
+    }, []); // Empty dependency array - animation runs once and never restarts
 
     return (
         <canvas

@@ -58,14 +58,14 @@ const RaceManager = () => {
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-rajdhani font-bold text-white border-l-4 border-neon-red pl-4">
+                <h2 className="text-3xl font-rajdhani font-bold text-white border-l-4 border-neon-blue pl-4">
                     RACE CONTROL
                 </h2>
                 <div className="flex space-x-4 items-center">
                     <select
                         value={selectedRaceId}
                         onChange={(e) => setSelectedRaceId(e.target.value)}
-                        className="bg-gray-900 text-white border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-neon-red"
+                        className="bg-gray-900 text-white border border-gray-700 rounded px-4 py-2 focus:outline-none focus:border-neon-blue"
                     >
                         {races.map(race => (
                             <option key={race.id} value={race.id}>{race.name}</option>
@@ -74,7 +74,7 @@ const RaceManager = () => {
                     {isAdmin && (
                         <button
                             onClick={handleSave}
-                            className="flex items-center bg-neon-red hover:bg-red-700 text-white px-6 py-2 rounded font-bold transition-colors"
+                            className="flex items-center bg-cyan-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-bold transition-colors"
                         >
                             <Save className="w-4 h-4 mr-2" />
                             Save Results
@@ -104,7 +104,7 @@ const RaceManager = () => {
                                     value={raceResults[position] || ''}
                                     onChange={(e) => handleRacerSelect(position, e.target.value)}
                                     disabled={!isAdmin}
-                                    className="w-full bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-neon-red disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 focus:outline-none focus:border-neon-blue disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <option value="">-- Select Racer --</option>
                                     {racers

@@ -16,12 +16,12 @@ const Info = () => {
             {/* Tournament Structure */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
                 <div className="flex items-center mb-4">
-                    <Calendar className="w-6 h-6 text-neon-red mr-3" />
+                    <Calendar className="w-6 h-6 text-neon-blue mr-3" />
                     <h2 className="text-2xl font-rajdhani font-bold text-white">Tournament Structure</h2>
                 </div>
                 <div className="space-y-3 text-gray-300">
                     <p>
-                        The Zero Division Underground Racing League operates on a <span className="text-white font-bold">seasonal format</span>, with each season consisting of <span className="text-neon-red font-bold">5 races</span>.
+                        The Zero Division Underground Racing League operates on a <span className="text-white font-bold">seasonal format</span>, with each season consisting of <span className="text-neon-blue font-bold">5 races</span>.
                     </p>
                     <p>
                         Racers accumulate points throughout the season, with the final standings determining prize distribution at the end of each season.
@@ -35,7 +35,7 @@ const Info = () => {
             {/* Points System */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
                 <div className="flex items-center mb-4">
-                    <Trophy className="w-6 h-6 text-neon-red mr-3" />
+                    <Trophy className="w-6 h-6 text-neon-blue mr-3" />
                     <h2 className="text-2xl font-rajdhani font-bold text-white">Points System</h2>
                 </div>
                 <p className="text-gray-300 mb-4">
@@ -57,12 +57,12 @@ const Info = () => {
                         <div
                             key={item.pos}
                             className={`p-3 rounded text-center ${item.highlight
-                                ? 'bg-neon-red/10 border border-neon-red/30'
+                                ? 'bg-neon-blue/10 border border-neon-blue/30'
                                 : 'bg-gray-800/50 border border-gray-700'
                                 }`}
                         >
                             <div className="text-sm text-gray-400">{item.pos}</div>
-                            <div className={`text-xl font-bold ${item.highlight ? 'text-neon-red' : 'text-white'}`}>
+                            <div className={`text-xl font-bold ${item.highlight ? 'text-neon-blue' : 'text-white'}`}>
                                 {item.pts} pts
                             </div>
                         </div>
@@ -76,7 +76,7 @@ const Info = () => {
             {/* Prize Distribution */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
                 <div className="flex items-center mb-4">
-                    <DollarSign className="w-6 h-6 text-neon-red mr-3" />
+                    <DollarSign className="w-6 h-6 text-neon-blue mr-3" />
                     <h2 className="text-2xl font-rajdhani font-bold text-white">Prize Distribution</h2>
                 </div>
                 <p className="text-gray-300 mb-4">
@@ -116,15 +116,15 @@ const Info = () => {
             {/* Vehicle Requirements */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
                 <div className="flex items-center mb-4">
-                    <Car className="w-6 h-6 text-neon-red mr-3" />
+                    <Car className="w-6 h-6 text-neon-blue mr-3" />
                     <h2 className="text-2xl font-rajdhani font-bold text-white">Vehicle Requirements</h2>
                 </div>
-                <div className="bg-neon-red/10 border border-neon-red/30 rounded p-4 mb-4">
+                <div className="bg-neon-blue/10 border border-neon-blue/30 rounded p-4 mb-4">
                     <p className="text-white font-bold text-lg mb-2">
                         ⚠️ A-CLASS VEHICLES ONLY
                     </p>
                     <p className="text-gray-300">
-                        This league is restricted to <span className="text-neon-red font-bold">A-Class vehicles</span> only. Any vehicle not meeting A-Class specifications will be disqualified from competition.
+                        This league is restricted to <span className="text-neon-blue font-bold">A-Class vehicles</span> only. Any vehicle not meeting A-Class specifications will be disqualified from competition.
                     </p>
                 </div>
                 <div className="bg-yellow-900/20 border border-yellow-500/30 rounded p-4">
@@ -139,7 +139,7 @@ const Info = () => {
 
             {/* Contact Info */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 text-center">
-                <InfoIcon className="w-12 h-12 text-neon-red mx-auto mb-4" />
+                <InfoIcon className="w-12 h-12 text-neon-blue mx-auto mb-4" />
                 <h2 className="text-2xl font-rajdhani font-bold text-white mb-2">
                     Questions?
                 </h2>
