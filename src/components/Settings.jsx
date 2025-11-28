@@ -2,7 +2,15 @@ import React from 'react';
 import { useLeague } from '../context/LeagueContext';
 
 const Settings = () => {
-    const { settings, setSettings } = useLeague();
+    const { settings, setSettings, isAdmin, verifyAdmin, logoutAdmin } = useLeague();
+    const [accessCode, setAccessCode] = React.useState('');
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        if (verifyAdmin(accessCode)) {
+            setAccessCode('');
+        }
+    };
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -11,18 +19,61 @@ const Settings = () => {
             </h2>
 
             <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 shadow-2xl space-y-6">
+                {/* Admin Access Section */}
+                <div className="border-b border-gray-800 pb-6">
+                    <h3 className="text-lg font-bold text-white mb-4">Admin Access</h3>
+                    {!isAdmin ? (
+                        <form onSubmit={handleLogin} className="flex gap-4">
+                            <input
+                                type="password"
+                                value={accessCode}
+                                onChange={(e) => setAccessCode(e.target.value)}
+                                placeholder="Enter Access Code"
+                                className="flex-1 bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-blue font-rajdhani"
+                            />
+                            <button
+                                type="submit"
+                                className="bg-neon-blue text-black font-bold px-6 py-2 rounded hover:bg-blue-400 transition-colors font-rajdhani"
+                            >
+                                LOGIN
+                            </button>
+                        </form>
+                    ) : (
+                        <div className="flex items-center justify-between bg-green-900/20 border border-green-500/30 rounded p-4">
+                            <div className="flex items-center gap-2 text-green-400">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span className="font-rajdhani font-bold">ADMIN ACCESS GRANTED</span>
+                            </div>
+                            <button
+                                onClick={logoutAdmin}
+                                className="text-gray-400 hover:text-white text-sm underline"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    )}
+                </div>
+
                 <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">
                         Total Prize Pool ($)
                     </label>
-                    <input
-                        type="number"
-                        value={settings.totalPrizePool}
-                        onChange={(e) => setSettings(prev => ({ ...prev, totalPrizePool: Number(e.target.value) }))}
-                        className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-blue font-rajdhani text-xl"
-                    />
+                    {isAdmin ? (
+                        <input
+                            type="number"
+                            value={settings.totalPrizePool}
+                            onChange={(e) => setSettings({ ...settings, totalPrizePool: Number(e.target.value) })}
+                            className="w-full bg-black/50 border border-gray-700 rounded px-4 py-2 text-white focus:outline-none focus:border-neon-blue font-rajdhani text-xl"
+                        />
+                    ) : (
+                        <div className="w-full bg-black/30 border border-gray-800 rounded px-4 py-2 text-gray-300 font-rajdhani text-xl cursor-not-allowed">
+                            ${settings.totalPrizePool.toLocaleString()}
+                        </div>
+                    )}
                     <p className="text-xs text-gray-500 mt-2">
-                        This amount will be distributed according to the league's percentage rules.
+                        {isAdmin
+                            ? "This amount will be distributed according to the league's percentage rules."
+                            : "Only admins can modify the prize pool."}
                     </p>
                 </div>
 
@@ -33,6 +84,7 @@ const Settings = () => {
                             if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
                                 localStorage.removeItem('zdurl_settings');
                                 localStorage.removeItem('zdurl_racers');
+                                localStorage.removeItem('zdurl_admin');
                                 window.location.reload();
                             }
                         }}

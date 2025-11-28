@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { fetchRacers, updateRacer as updateRacerDB, deleteRacer as deleteRacerDB, updateRaceResults, syncFromGoogleForm } from '../utils/supabase';
+import { supabase, fetchRacers, updateRacer as updateRacerDB, deleteRacer as deleteRacerDB, updateRaceResults, syncFromGoogleForm, fetchSettings, updateSettings as updateSettingsDB } from '../utils/supabase';
 import { calculatePoints } from '../utils/pointsSystem';
 import { useToast } from './ToastContext';
 
@@ -11,24 +11,85 @@ export const LeagueProvider = ({ children }) => {
     const { showToast } = useToast();
     const [racers, setRacers] = useState([]);
     const [settings, setSettings] = useState({
-        totalPrizePool: 150000 // Default from image
+        totalPrizePool: 150000
     });
     const [loading, setLoading] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
-    // Load racers from Supabase on mount
+    // Load racers and settings from Supabase on mount
     useEffect(() => {
-        loadRacers();
+        loadData();
+        // Check for persisted admin session
+        const savedAdmin = localStorage.getItem('zdurl_admin');
+        if (savedAdmin === 'true') {
+            setIsAdmin(true);
+        }
+
+        // Real-time subscription for settings
+        const subscription = supabase
+            .channel('public:racers')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'racers', filter: 'name=eq.__LEAGUE_SETTINGS__' }, (payload) => {
+                console.log('Real-time settings update received:', payload);
+                if (payload.new && payload.new.race_results) {
+                    setSettings(payload.new.race_results);
+                    showToast('Settings updated remotely', 'info');
+                }
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscription);
+        };
     }, []);
 
-    const loadRacers = async () => {
+    const loadData = async () => {
         setLoading(true);
         try {
-            const data = await fetchRacers();
-            setRacers(data);
+            const [racersData, settingsData] = await Promise.all([
+                fetchRacers(),
+                fetchSettings()
+            ]);
+
+            setRacers(racersData);
+            if (settingsData) {
+                setSettings(settingsData);
+            }
         } catch (error) {
-            console.error('Error loading racers:', error);
+            console.error('Error loading data:', error);
+            showToast('Failed to load league data', 'error');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const verifyAdmin = (code) => {
+        if (code === 'DeroZivision@4!') {
+            setIsAdmin(true);
+            localStorage.setItem('zdurl_admin', 'true');
+            showToast('Admin access granted', 'success');
+            return true;
+        }
+        showToast('Invalid access code', 'error');
+        return false;
+    };
+
+    const logoutAdmin = () => {
+        setIsAdmin(false);
+        localStorage.removeItem('zdurl_admin');
+        showToast('Admin logged out', 'info');
+    };
+
+    const updateLeagueSettings = async (newSettings) => {
+        try {
+            // Optimistic update
+            setSettings(newSettings);
+            await updateSettingsDB(newSettings);
+            showToast('Settings saved successfully', 'success');
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            showToast('Failed to save settings', 'error');
+            // Revert on error (reload data)
+            loadData();
         }
     };
 
@@ -36,7 +97,7 @@ export const LeagueProvider = ({ children }) => {
         setLoading(true);
         try {
             const newCount = await syncFromGoogleForm();
-            await loadRacers();
+            await loadData(); // Reload everything to be safe
             if (newCount > 0) {
                 showToast(`Synced ${newCount} new racer(s) from Google Form!`, 'success');
             } else {
@@ -51,6 +112,10 @@ export const LeagueProvider = ({ children }) => {
     };
 
     const updateRacer = async (id, updates) => {
+        if (!isAdmin) {
+            showToast('Admin access required', 'error');
+            return;
+        }
         try {
             await updateRacerDB(id, updates);
             setRacers(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
@@ -61,6 +126,10 @@ export const LeagueProvider = ({ children }) => {
     };
 
     const deleteRacer = async (id) => {
+        if (!isAdmin) {
+            showToast('Admin access required', 'error');
+            return;
+        }
         try {
             await deleteRacerDB(id);
             setRacers(prev => prev.filter(r => r.id !== id));
@@ -71,6 +140,11 @@ export const LeagueProvider = ({ children }) => {
     };
 
     const updateRaceResult = async (raceId, results) => {
+        if (!isAdmin) {
+            showToast('Admin access required', 'error');
+            return;
+        }
+
         // results: { racerId: position }
         const updatedRacers = racers.map(r => {
             const position = results[r.id];
@@ -106,13 +180,16 @@ export const LeagueProvider = ({ children }) => {
         <LeagueContext.Provider value={{
             racers,
             settings,
-            setSettings,
+            setSettings: updateLeagueSettings,
             syncRoster,
             loading,
             updateRacer,
             deleteRacer,
             updateRaceResult,
-            refreshRacers: loadRacers
+            refreshRacers: loadData,
+            isAdmin,
+            verifyAdmin,
+            logoutAdmin
         }}>
             {children}
         </LeagueContext.Provider>

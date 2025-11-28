@@ -10,6 +10,7 @@ export const fetchRacers = async () => {
     const { data, error } = await supabase
         .from('racers')
         .select('*')
+        .neq('name', '__LEAGUE_SETTINGS__')
         .order('id');
 
     if (error) {
@@ -119,6 +120,73 @@ export const syncFromGoogleForm = async () => {
         return toAdd.length;
     } catch (error) {
         console.error('Error syncing from Google Form:', error);
+        throw error;
+    }
+};
+
+
+// Fetch global settings
+export const fetchSettings = async () => {
+    const { data, error } = await supabase
+        .from('racers')
+        .select('*')
+        .eq('name', '__LEAGUE_SETTINGS__')
+        .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "The result contains 0 rows"
+        console.error('Error fetching settings:', error);
+        return null;
+    }
+
+    if (!data) {
+        // Create default settings if they don't exist
+        const defaultSettings = {
+            totalPrizePool: 150000
+        };
+
+        const { data: newData, error: createError } = await supabase
+            .from('racers')
+            .insert([{
+                name: '__LEAGUE_SETTINGS__',
+                points: 0,
+                race_results: defaultSettings
+            }])
+            .select()
+            .single();
+
+        if (createError) {
+            console.error('Error creating settings:', createError);
+            return null;
+        }
+
+        return defaultSettings;
+    }
+
+    return data.race_results; // We store settings in the race_results JSON column
+};
+
+// Update global settings
+export const updateSettings = async (settings) => {
+    // First get the ID of the settings row
+    const { data: existing } = await supabase
+        .from('racers')
+        .select('id')
+        .eq('name', '__LEAGUE_SETTINGS__')
+        .single();
+
+    if (!existing) {
+        // Should have been created by fetchSettings, but just in case
+        await fetchSettings();
+        return updateSettings(settings);
+    }
+
+    const { error } = await supabase
+        .from('racers')
+        .update({ race_results: settings })
+        .eq('id', existing.id);
+
+    if (error) {
+        console.error('Error updating settings:', error);
         throw error;
     }
 };
