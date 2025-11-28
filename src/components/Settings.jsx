@@ -22,12 +22,23 @@ const Settings = () => {
         }
     };
 
-    const handleUpdatePrizePool = () => {
+    const handleUpdatePrizePool = async () => {
         const newPrizePool = Number(localPrizePool);
+
+        // Optimistic update
         setSettings(prevSettings => ({
             ...prevSettings,
             totalPrizePool: newPrizePool
         }));
+
+        try {
+            const { updateSettings } = await import('../utils/supabase');
+            await updateSettings({ totalPrizePool: newPrizePool });
+            // showToast('Settings saved successfully', 'success'); // Toast is handled in LeagueContext polling or we can add it here
+        } catch (error) {
+            console.error('Failed to update settings:', error);
+            // Revert on error?
+        }
     };
 
     const runDebug = async () => {
