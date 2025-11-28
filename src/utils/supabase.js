@@ -130,82 +130,72 @@ export const syncFromGoogleForm = async () => {
 
 // Fetch global settings
 export const fetchSettings = async () => {
+    // Client-side filtering workaround for Supabase permissions issue
     const { data, error } = await supabase
         .from('racers')
         .select('*')
-        .eq('name', '__LEAGUE_SETTINGS__'); // Returns multiple rows due to Supabase quirk
+        .eq('name', '__LEAGUE_SETTINGS__')
+        .order('id', { ascending: false }); // Always get the latest one
 
     if (error) {
         console.error('Error fetching settings:', error);
         return null;
     }
 
-    // Client-side find
-    const settingsRow = data.find(r => r.name === '__LEAGUE_SETTINGS__');
+    // Find the settings row
+    const settingsRow = data?.find(r => r.name === '__LEAGUE_SETTINGS__');
 
     if (!settingsRow) {
-        // Create default settings if they don't exist
+        // Create default settings if not found
         const defaultSettings = {
             totalPrizePool: 150000
         };
 
-        const { data: newData, error: createError } = await supabase
+        const { data: newRow, error: createError } = await supabase
             .from('racers')
             .insert([{
                 name: '__LEAGUE_SETTINGS__',
-                points: 0,
-                race_results: defaultSettings
+                race_results: defaultSettings,
+                points: 0
             }])
             .select()
             .single();
 
         if (createError) {
             console.error('Error creating settings:', createError);
-            return null;
+            return defaultSettings;
         }
 
-        return defaultSettings;
+        return newRow.race_results;
     }
 
-    return settingsRow.race_results; // We store settings in the race_results JSON column
+    return settingsRow.race_results;
 };
 
 // Update global settings
 export const updateSettings = async (settings) => {
-    console.log('[updateSettings] Called with:', settings);
-
     // First get the ID of the settings row using client-side find
-    const { data, error: fetchError } = await supabase
+    const { data } = await supabase
         .from('racers')
         .select('*')
-        .eq('name', '__LEAGUE_SETTINGS__');
-
-    console.log('[updateSettings] Fetched data:', data);
-    if (fetchError) {
-        console.error('[updateSettings] Fetch error:', fetchError);
-        throw fetchError;
-    }
+        .eq('name', '__LEAGUE_SETTINGS__')
+        .order('id', { ascending: false }); // Always get the latest one
 
     const existing = data?.find(r => r.name === '__LEAGUE_SETTINGS__');
-    console.log('[updateSettings] Found existing row:', existing);
 
     if (!existing) {
-        console.log('[updateSettings] No existing row, creating...');
         // Should have been created by fetchSettings, but just in case
         await fetchSettings();
         return updateSettings(settings);
     }
 
-    console.log('[updateSettings] Updating row ID:', existing.id, 'with:', settings);
     const { error } = await supabase
         .from('racers')
         .update({ race_results: settings })
         .eq('id', existing.id);
 
     if (error) {
-        console.error('[updateSettings] Update error:', error);
+        console.error('Error updating settings:', error);
         throw error;
     }
-
-    console.log('[updateSettings] Update successful!');
 };
