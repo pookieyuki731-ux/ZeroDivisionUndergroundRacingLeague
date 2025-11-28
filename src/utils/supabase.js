@@ -130,22 +130,25 @@ export const syncFromGoogleForm = async () => {
 
 // Fetch global settings
 export const fetchSettings = async () => {
+    console.log('[fetchSettings] Starting fetch...');
     // Client-side filtering workaround for Supabase permissions issue
     const { data, error } = await supabase
         .from('racers')
         .select('*')
-        .eq('name', '__LEAGUE_SETTINGS__')
-        .order('id', { ascending: false }); // Always get the latest one
+        .eq('name', '__LEAGUE_SETTINGS__');
 
     if (error) {
-        console.error('Error fetching settings:', error);
+        console.error('[fetchSettings] Error fetching settings:', error);
         return null;
     }
+
+    console.log('[fetchSettings] Raw data:', data);
 
     // Find the settings row
     const settingsRow = data?.find(r => r.name === '__LEAGUE_SETTINGS__');
 
     if (!settingsRow) {
+        console.log('[fetchSettings] Row not found! Attempting to create default...');
         // Create default settings if not found
         const defaultSettings = {
             totalPrizePool: 150000
@@ -162,13 +165,16 @@ export const fetchSettings = async () => {
             .single();
 
         if (createError) {
-            console.error('Error creating settings:', createError);
+            console.error('[fetchSettings] Error creating settings:', createError);
+            // If we can't create, just return default to avoid crashing
             return defaultSettings;
         }
 
+        console.log('[fetchSettings] Created new default row:', newRow);
         return newRow.race_results;
     }
 
+    console.log('[fetchSettings] Found row:', settingsRow);
     return settingsRow.race_results;
 };
 
