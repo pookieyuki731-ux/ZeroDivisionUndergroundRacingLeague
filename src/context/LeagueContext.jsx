@@ -81,10 +81,13 @@ export const LeagueProvider = ({ children }) => {
     };
 
     const updateLeagueSettings = async (newSettings) => {
+        console.log('updateLeagueSettings called with:', newSettings);
         try {
             // Optimistic update
             setSettings(newSettings);
+            console.log('Local state updated, calling Supabase...');
             await updateSettingsDB(newSettings);
+            console.log('Supabase update successful');
             showToast('Settings saved successfully', 'success');
         } catch (error) {
             console.error('Error saving settings:', error);
