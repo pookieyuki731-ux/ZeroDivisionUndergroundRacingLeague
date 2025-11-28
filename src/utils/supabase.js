@@ -172,27 +172,40 @@ export const fetchSettings = async () => {
 
 // Update global settings
 export const updateSettings = async (settings) => {
+    console.log('[updateSettings] Called with:', settings);
+
     // First get the ID of the settings row using client-side find
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
         .from('racers')
         .select('*')
         .eq('name', '__LEAGUE_SETTINGS__');
 
+    console.log('[updateSettings] Fetched data:', data);
+    if (fetchError) {
+        console.error('[updateSettings] Fetch error:', fetchError);
+        throw fetchError;
+    }
+
     const existing = data?.find(r => r.name === '__LEAGUE_SETTINGS__');
+    console.log('[updateSettings] Found existing row:', existing);
 
     if (!existing) {
+        console.log('[updateSettings] No existing row, creating...');
         // Should have been created by fetchSettings, but just in case
         await fetchSettings();
         return updateSettings(settings);
     }
 
+    console.log('[updateSettings] Updating row ID:', existing.id, 'with:', settings);
     const { error } = await supabase
         .from('racers')
         .update({ race_results: settings })
         .eq('id', existing.id);
 
     if (error) {
-        console.error('Error updating settings:', error);
+        console.error('[updateSettings] Update error:', error);
         throw error;
     }
+
+    console.log('[updateSettings] Update successful!');
 };
