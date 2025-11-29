@@ -104,26 +104,36 @@ export const syncFromGoogleForm = async () => {
 
         if (!data.values || data.values.length === 0) return;
 
-        // Column B (index 1) contains codenames, Column C (index 2) contains vehicle names
-        const newRacers = data.values.slice(1)
+        // Column B (index 1) contains codenames, Column F (index 5) contains vehicle names
+        const sheetRacers = data.values.slice(1)
             .map(row => ({
                 name: row[1],
-                vehicle: row[2] || 'Unknown Vehicle'
+                vehicle: row[5] || 'Unknown Vehicle'
             }))
             .filter(racer => racer.name);
 
         // Get existing racers
         const existing = await fetchRacers();
-        const existingNames = existing.map(r => r.name);
+        const existingMap = new Map(existing.map(r => [r.name, r]));
 
-        // Add only new racers
-        const toAdd = newRacers.filter(racer => !existingNames.includes(racer.name));
+        let addedCount = 0;
+        let updatedCount = 0;
 
-        for (const racer of toAdd) {
-            await addRacer(racer.name, racer.vehicle);
+        for (const sheetRacer of sheetRacers) {
+            const existingRacer = existingMap.get(sheetRacer.name);
+
+            if (!existingRacer) {
+                // Add new racer
+                await addRacer(sheetRacer.name, sheetRacer.vehicle);
+                addedCount++;
+            } else if (existingRacer.vehicle !== sheetRacer.vehicle) {
+                // Update vehicle name if it changed
+                await updateRacer(existingRacer.id, { vehicle: sheetRacer.vehicle });
+                updatedCount++;
+            }
         }
 
-        return toAdd.length;
+        return { added: addedCount, updated: updatedCount };
     } catch (error) {
         console.error('Error syncing from Google Form:', error);
         throw error;
