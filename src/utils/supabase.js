@@ -151,7 +151,14 @@ export const fetchSettings = async () => {
         console.log('[fetchSettings] Row not found! Attempting to create default...');
         // Create default settings if not found
         const defaultSettings = {
-            totalPrizePool: 150000
+            totalPrizePool: 150000,
+            raceNames: {
+                race_1: 'Race 1',
+                race_2: 'Race 2',
+                race_3: 'Race 3',
+                race_4: 'Race 4',
+                race_5: 'Race 5'
+            }
         };
 
         const { data: newRow, error: createError } = await supabase
@@ -175,7 +182,20 @@ export const fetchSettings = async () => {
     }
 
     console.log('[fetchSettings] Found row:', settingsRow);
-    return settingsRow.race_results;
+    const settings = settingsRow.race_results;
+
+    // Ensure race names exist (backward compatibility)
+    if (!settings.raceNames) {
+        settings.raceNames = {
+            race_1: 'Race 1',
+            race_2: 'Race 2',
+            race_3: 'Race 3',
+            race_4: 'Race 4',
+            race_5: 'Race 5'
+        };
+    }
+
+    return settings;
 };
 
 // Update global settings

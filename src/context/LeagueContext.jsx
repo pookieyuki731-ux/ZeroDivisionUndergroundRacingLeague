@@ -11,7 +11,14 @@ export const LeagueProvider = ({ children }) => {
     const { showToast } = useToast();
     const [racers, setRacers] = useState([]);
     const [settings, setSettings] = useState({
-        totalPrizePool: 150000
+        totalPrizePool: 150000,
+        raceNames: {
+            race_1: 'Race 1',
+            race_2: 'Race 2',
+            race_3: 'Race 3',
+            race_4: 'Race 4',
+            race_5: 'Race 5'
+        }
     });
     const [loading, setLoading] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -32,8 +39,11 @@ export const LeagueProvider = ({ children }) => {
                 const newSettings = await fetchSettings();
                 if (newSettings) {
                     setSettings(prevSettings => {
-                        // Only update if the value actually changed
-                        if (newSettings.totalPrizePool !== prevSettings.totalPrizePool) {
+                        // Check if totalPrizePool or raceNames changed
+                        const prizePoolChanged = newSettings.totalPrizePool !== prevSettings.totalPrizePool;
+                        const raceNamesChanged = JSON.stringify(newSettings.raceNames) !== JSON.stringify(prevSettings.raceNames);
+
+                        if (prizePoolChanged || raceNamesChanged) {
                             showToast('Settings updated', 'info');
                             return newSettings;
                         }

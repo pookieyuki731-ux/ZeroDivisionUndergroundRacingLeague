@@ -18,10 +18,10 @@ export const ToastProvider = ({ children }) => {
         const id = Date.now();
         setToasts(prev => [...prev, { id, message, type }]);
 
-        // Auto-dismiss after 3 seconds
+        // Auto-dismiss after 4 seconds
         setTimeout(() => {
             setToasts(prev => prev.filter(toast => toast.id !== id));
-        }, 3000);
+        }, 4000);
     }, []);
 
     const removeToast = useCallback((id) => {
@@ -31,6 +31,7 @@ export const ToastProvider = ({ children }) => {
     return (
         <ToastContext.Provider value={{ showToast }}>
             {children}
+
             <div className="fixed top-4 right-4 z-50 space-y-2">
                 {toasts.map(toast => (
                     <Toast
@@ -49,38 +50,38 @@ const Toast = ({ message, type, onClose }) => {
     const config = {
         success: {
             icon: CheckCircle,
-            bgColor: 'bg-green-500/90',
-            borderColor: 'border-green-400',
-            textColor: 'text-white'
+            bgColor: 'from-green-600 to-green-700',
+            iconColor: 'text-white'
         },
         error: {
             icon: XCircle,
-            bgColor: 'bg-red-500/90',
-            borderColor: 'border-red-400',
-            textColor: 'text-white'
+            bgColor: 'from-red-600 to-red-700',
+            iconColor: 'text-white'
         },
         info: {
             icon: Info,
-            bgColor: 'bg-blue-500/90',
-            borderColor: 'border-blue-400',
-            textColor: 'text-white'
+            bgColor: 'from-cyan-600 to-blue-600',
+            iconColor: 'text-white'
         }
     };
 
-    const { icon: Icon, bgColor, borderColor, textColor } = config[type] || config.info;
+    const { icon: Icon, bgColor, iconColor } = config[type] || config.info;
 
     return (
         <div
-            className={`${bgColor} ${borderColor} ${textColor} border-2 rounded-lg shadow-2xl backdrop-blur-sm p-4 min-w-[300px] max-w-md animate-slide-in-right flex items-center gap-3`}
+            className={`bg-gradient-to-r ${bgColor} text-white rounded-xl shadow-2xl backdrop-blur-sm p-4 min-w-[320px] max-w-md border border-white/20 flex items-start gap-3 animate-slide-in-left`}
             style={{
-                animation: 'slideInRight 0.3s ease-out'
+                animation: 'slideInLeft 0.3s ease-out'
             }}
         >
-            <Icon className="w-5 h-5 flex-shrink-0" />
-            <p className="flex-1 font-medium">{message}</p>
+            <div className={`${iconColor} mt-0.5`}>
+                <Icon className="w-5 h-5 flex-shrink-0" />
+            </div>
+            <p className="flex-1 font-medium text-sm leading-relaxed">{message}</p>
             <button
                 onClick={onClose}
-                className="flex-shrink-0 hover:bg-white/20 rounded p-1 transition-colors"
+                className="flex-shrink-0 hover:bg-white/20 rounded-lg p-1.5 transition-colors"
+                aria-label="Close notification"
             >
                 <X className="w-4 h-4" />
             </button>
