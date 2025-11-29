@@ -57,6 +57,7 @@ const RosterManager = () => {
                     <thead className="bg-gray-800 text-gray-400 uppercase text-xs font-bold tracking-wider">
                         <tr>
                             <th className="px-6 py-3">Racer Name</th>
+                            <th className="px-6 py-3">Vehicle</th>
                             <th className="px-6 py-3 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -73,6 +74,9 @@ const RosterManager = () => {
                                     ) : (
                                         <span className="font-medium text-white">{racer.name}</span>
                                     )}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="text-gray-300 italic">{racer.vehicle || 'Unknown Vehicle'}</span>
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end space-x-2">
@@ -101,7 +105,7 @@ const RosterManager = () => {
                         ))}
                         {racers.length === 0 && (
                             <tr>
-                                <td colSpan="2" className="px-6 py-8 text-center text-gray-500">
+                                <td colSpan="3" className="px-6 py-8 text-center text-gray-500">
                                     No racers found. Click "Sync Roster" to pull from Google Form.
                                 </td>
                             </tr>

@@ -28,10 +28,10 @@ export const fetchRacers = async () => {
 };
 
 // Add a new racer
-export const addRacer = async (name) => {
+export const addRacer = async (name, vehicle = 'Unknown Vehicle') => {
     const { data, error } = await supabase
         .from('racers')
-        .insert([{ name, points: 0, race_results: {} }])
+        .insert([{ name, vehicle, points: 0, race_results: {} }])
         .select();
 
     if (error) {
@@ -104,20 +104,23 @@ export const syncFromGoogleForm = async () => {
 
         if (!data.values || data.values.length === 0) return;
 
-        // Column B (index 1) contains codenames
+        // Column B (index 1) contains codenames, Column C (index 2) contains vehicle names
         const newRacers = data.values.slice(1)
-            .map(row => row[1])
-            .filter(name => name);
+            .map(row => ({
+                name: row[1],
+                vehicle: row[2] || 'Unknown Vehicle'
+            }))
+            .filter(racer => racer.name);
 
         // Get existing racers
         const existing = await fetchRacers();
         const existingNames = existing.map(r => r.name);
 
         // Add only new racers
-        const toAdd = newRacers.filter(name => !existingNames.includes(name));
+        const toAdd = newRacers.filter(racer => !existingNames.includes(racer.name));
 
-        for (const name of toAdd) {
-            await addRacer(name);
+        for (const racer of toAdd) {
+            await addRacer(racer.name, racer.vehicle);
         }
 
         return toAdd.length;

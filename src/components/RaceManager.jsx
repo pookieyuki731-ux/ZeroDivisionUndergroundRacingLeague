@@ -144,9 +144,16 @@ const RaceManager = () => {
                                     <div className="text-3xl font-bold">#{position}</div>
                                     {getPodiumIcon(position)}
                                 </div>
-                                {position === 1 && <div className="text-xs font-bold uppercase tracking-wider">Winner</div>}
-                                {position === 2 && <div className="text-xs font-bold uppercase tracking-wider">2nd Place</div>}
-                                {position === 3 && <div className="text-xs font-bold uppercase tracking-wider">3rd Place</div>}
+                                <div className="text-right">
+                                    {position === 1 && <div className="text-xs font-bold uppercase tracking-wider">Winner</div>}
+                                    {position === 2 && <div className="text-xs font-bold uppercase tracking-wider">2nd Place</div>}
+                                    {position === 3 && <div className="text-xs font-bold uppercase tracking-wider">3rd Place</div>}
+                                    {raceResults[position] && (
+                                        <div className="text-xs text-gray-400 mt-1 italic">
+                                            {racers.find(r => r.id === raceResults[position])?.vehicle || 'Unknown Vehicle'}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="relative inline-block w-full">
                                 <select
@@ -190,8 +197,10 @@ const RaceManager = () => {
                                 <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-800 border border-gray-600 font-bold text-xl text-gray-300">
                                     {position}
                                 </div>
-                                <div className="flex-1 text-sm text-gray-500 font-rajdhani">
-                                    Position {position}
+                                <div className="flex-1 text-sm text-gray-400 font-rajdhani italic">
+                                    {raceResults[position]
+                                        ? racers.find(r => r.id === raceResults[position])?.vehicle || 'Unknown Vehicle'
+                                        : 'No racer selected'}
                                 </div>
                             </div>
                             <div className="relative inline-block w-full">

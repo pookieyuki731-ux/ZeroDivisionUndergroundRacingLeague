@@ -22,6 +22,7 @@ const Leaderboard = () => {
                                 <tr>
                                     <th className="px-6 py-4">Pos</th>
                                     <th className="px-6 py-4">Racer</th>
+                                    <th className="px-6 py-4">Vehicle</th>
                                     <th className="px-6 py-4 text-right">Points</th>
                                 </tr>
                             </thead>
@@ -40,6 +41,9 @@ const Leaderboard = () => {
                                         <td className="px-6 py-4 font-medium text-white">
                                             {racer.name}
                                         </td>
+                                        <td className="px-6 py-4 text-gray-300 italic">
+                                            {racer.vehicle || 'Unknown Vehicle'}
+                                        </td>
                                         <td className="px-6 py-4 text-right font-bold text-neon-blue text-xl">
                                             {racer.points}
                                         </td>
@@ -47,7 +51,7 @@ const Leaderboard = () => {
                                 ))}
                                 {sortedRacers.length === 0 && (
                                     <tr>
-                                        <td colSpan="3" className="px-6 py-8 text-center text-gray-500">
+                                        <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
                                             No racers found.
                                         </td>
                                     </tr>
